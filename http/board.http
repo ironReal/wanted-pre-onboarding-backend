@@ -1,0 +1,8 @@
+### 게시물 등록
+POST localhost:8080/api/board/register
+Content-Type: application/json
+
+{
+  "title" : "wanted",
+  "content" : "content"
+}
