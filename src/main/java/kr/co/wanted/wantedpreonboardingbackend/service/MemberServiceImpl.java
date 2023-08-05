@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
-    private final ModelMapper modelMapper;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -32,7 +31,7 @@ public class MemberServiceImpl implements MemberService {
             throw new EmailExistException(CommonErrorCode.INVALID_PARAMETER);
         }
 
-        Member member = modelMapper.map(memberJoinDTO, Member.class);
+        Member member = Member.from(memberJoinDTO);
         member.changePassword(passwordEncoder.encode(memberJoinDTO.getPassword()));
         log.info("JOIN MEMBER = {}", member);
 
