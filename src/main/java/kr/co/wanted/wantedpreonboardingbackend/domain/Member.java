@@ -1,5 +1,6 @@
 package kr.co.wanted.wantedpreonboardingbackend.domain;
 
+import kr.co.wanted.wantedpreonboardingbackend.dto.MemberJoinDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +12,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Member {
@@ -32,5 +32,13 @@ public class Member {
 
     public void changePassword(String password) {
         this.password = password;
+    }
+
+    public static Member from(MemberJoinDTO dto) {
+        Member member = new Member();
+        member.email = dto.getEmail();
+        member.password = dto.getPassword();
+
+        return member;
     }
 }
