@@ -1,7 +1,9 @@
 package kr.co.wanted.wantedpreonboardingbackend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.co.wanted.wantedpreonboardingbackend.config.CustomSecurityConfig;
 import kr.co.wanted.wantedpreonboardingbackend.dto.BoardDTO;
+import kr.co.wanted.wantedpreonboardingbackend.repository.MemberRepository;
 import kr.co.wanted.wantedpreonboardingbackend.service.BoardService;
 import kr.co.wanted.wantedpreonboardingbackend.util.JWTUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,7 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @EnableConfigurationProperties
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(BoardController.class)
+@WebMvcTest(value = BoardController.class,
+excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = CustomSecurityConfig.class))
 class BoardControllerTest {
 
     @Autowired
@@ -42,6 +49,10 @@ class BoardControllerTest {
     @InjectMocks
     private JWTUtil jwtUtil;
 
+    @MockBean
+    private MemberRepository memberRepository;
+
+
     @BeforeEach
     void setUp() {
         ReflectionTestUtils.setField(jwtUtil, "key", "12341234");
@@ -49,9 +60,10 @@ class BoardControllerTest {
 
 
     @Test
+    @WithMockUser(username = "test@google.com", password = "12345678")
     @DisplayName("게시물 등록")
     void registerTest() throws Exception {
-        final BoardDTO DTO = BoardDTO.builder()
+        final BoardDTO boardDTO = BoardDTO.builder()
                 .title("testTitle")
                 .content("testContent")
                 .build();
@@ -59,12 +71,12 @@ class BoardControllerTest {
         Map<String, Object> claim = Map.of("email", "test@google.com");
         final String token = jwtUtil.generatedToken(claim, 1);
 
-        when(boardService.register(DTO)).thenReturn(1L);
+        when(boardService.register(boardDTO)).thenReturn(1L);
 
-        mvc.perform(MockMvcRequestBuilders.post("/api/")
-                        .header("Authorization", "Bearer " + token)
+        mvc.perform(MockMvcRequestBuilders.post("/api/board/register")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(DTO))
+                        .content(mapper.writeValueAsString(boardDTO))
                         .with(csrf()))
                 .andExpect(status().isCreated());
     }
