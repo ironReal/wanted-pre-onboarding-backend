@@ -41,8 +41,7 @@ public class BoardController {
     }
 
     @GetMapping(value = "/list")
-    public ResponseEntity<Page<BoardDTO>> list(
-            @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<Page<BoardDTO>> list(Pageable pageable) {
         log.info("BOARD LIST CONTROLLER");
         final Page<BoardDTO> list = boardService.list(pageable);
 
@@ -64,7 +63,7 @@ public class BoardController {
     public ResponseEntity<Map<String, Long>> delete(@PathVariable Long id) {
         log.info("BOARD DELETE CONTROLLER");
         final Long deleteId = boardService.delete(id);
-        Map<String, Long> resultMap = Map.of("delete board id", deleteId);
+        Map<String, Long> resultMap = Map.of("delete_board_id", deleteId);
 
         return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
