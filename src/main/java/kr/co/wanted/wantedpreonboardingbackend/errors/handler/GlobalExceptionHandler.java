@@ -1,12 +1,10 @@
 package kr.co.wanted.wantedpreonboardingbackend.errors.handler;
 
-import kr.co.wanted.wantedpreonboardingbackend.errors.errorcode.CommonErrorCode;
+import kr.co.wanted.wantedpreonboardingbackend.errors.errorcode.CustomErrorCode;
 import kr.co.wanted.wantedpreonboardingbackend.errors.errorcode.ErrorCode;
 import kr.co.wanted.wantedpreonboardingbackend.errors.exception.BoardIdNotFound;
 import kr.co.wanted.wantedpreonboardingbackend.errors.exception.BoardWriterValidation;
-import kr.co.wanted.wantedpreonboardingbackend.errors.exception.EmailExistException;
 import kr.co.wanted.wantedpreonboardingbackend.errors.response.ErrorResponse;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +40,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatus status,
             WebRequest request) {
 
-        ErrorCode errorCode = CommonErrorCode.INVALID_PARAMETER;
+        ErrorCode errorCode = CustomErrorCode.JOIN_INPUT_FORMAT;
         return handleExceptionInternal(e, errorCode);
     }
 

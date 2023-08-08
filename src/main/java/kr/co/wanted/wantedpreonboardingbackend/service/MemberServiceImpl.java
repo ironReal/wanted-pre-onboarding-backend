@@ -1,6 +1,7 @@
 package kr.co.wanted.wantedpreonboardingbackend.service;
 
 import kr.co.wanted.wantedpreonboardingbackend.errors.errorcode.CommonErrorCode;
+import kr.co.wanted.wantedpreonboardingbackend.errors.errorcode.CustomErrorCode;
 import kr.co.wanted.wantedpreonboardingbackend.errors.errorcode.ErrorCode;
 import kr.co.wanted.wantedpreonboardingbackend.errors.exception.EmailExistException;
 import kr.co.wanted.wantedpreonboardingbackend.domain.Member;
@@ -28,7 +29,7 @@ public class MemberServiceImpl implements MemberService {
         final boolean exist = memberRepository.existsByEmail(email);
 
         if (exist) {
-            throw new EmailExistException(CommonErrorCode.INVALID_PARAMETER);
+            throw new EmailExistException(CustomErrorCode.JOIN_INPUT_FORMAT);
         }
 
         Member member = Member.from(memberJoinDTO);

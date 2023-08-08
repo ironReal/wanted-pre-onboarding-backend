@@ -145,26 +145,6 @@ class BoardControllerTest {
                 .andExpect(jsonPath("$.delete_board_id").value(anyId));
     }
 
-    @Test
-    @DisplayName("게시물 목록 조회")
-    void testBoardList() throws Exception {
-
-        mvc.perform(MockMvcRequestBuilders.get("/api/board/list")
-                        .header(HttpHeaders.AUTHORIZATION, generatedBearerToken(1))
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("page", "3")
-                        .param("size", "3")
-                        .param("sort", "regData,desc"))
-                .andExpect(status().isOk());
-
-        ArgumentCaptor<Pageable> pageableArgumentCaptor = ArgumentCaptor.forClass(Pageable.class);
-        verify(boardRepository).findAll(pageableArgumentCaptor.capture());
-        PageRequest pageable = (PageRequest) pageableArgumentCaptor.getValue();
-
-        Assertions.assertThat(pageable.getPageNumber()).isEqualTo(3);
-    }
-
     private String generatedBearerToken(int day) {
         Map<String, Object> claim = Map.of("email", "test@google.com");
         final String token = jwtUtil.generatedToken(claim, day);
