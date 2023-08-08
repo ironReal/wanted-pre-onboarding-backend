@@ -2,7 +2,6 @@ package kr.co.wanted.wantedpreonboardingbackend.domain;
 
 import kr.co.wanted.wantedpreonboardingbackend.dto.MemberJoinDTO;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,7 +11,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Member {
 

@@ -29,8 +29,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(MemberController.class)
 @ExtendWith(SpringExtension.class)
@@ -82,8 +81,7 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf()))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Email format is not correct"));
-
+                .andExpect(jsonPath("$.message").value("Email conditions include @ or password conditions are at least 8 characters"));
     }
 
     @Test
@@ -100,8 +98,7 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf()))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Password must be at least 8 characters long"));
-
+                .andExpect(jsonPath("$.message").value("Email conditions include @ or password conditions are at least 8 characters"));
     }
 
 }

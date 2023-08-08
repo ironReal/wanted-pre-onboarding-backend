@@ -8,6 +8,7 @@ import kr.co.wanted.wantedpreonboardingbackend.errors.exception.BoardIdNotFound;
 import kr.co.wanted.wantedpreonboardingbackend.errors.exception.BoardWriterValidation;
 import kr.co.wanted.wantedpreonboardingbackend.domain.Board;
 import kr.co.wanted.wantedpreonboardingbackend.dto.BoardDTO;
+import kr.co.wanted.wantedpreonboardingbackend.errors.exception.EmailNotFoundException;
 import kr.co.wanted.wantedpreonboardingbackend.repository.BoardRepository;
 import kr.co.wanted.wantedpreonboardingbackend.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class BoardServiceImpl implements BoardService {
 
         final String email = authenticationGetUsername();
         final Optional<Member> findMember = memberRepository.findByEmail(email);
-        final Member member = findMember.orElseThrow();
+        final Member member = findMember.orElseThrow(() -> new EmailNotFoundException(CustomErrorCode.RESOURCE_NOT_FOUND));
 
         final Board board = modelMapper.map(boardDTO, Board.class);
         board.changeWriter(member);

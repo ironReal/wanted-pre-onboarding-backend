@@ -1,6 +1,7 @@
 package kr.co.wanted.wantedpreonboardingbackend.service;
 
 import kr.co.wanted.wantedpreonboardingbackend.errors.errorcode.CommonErrorCode;
+import kr.co.wanted.wantedpreonboardingbackend.errors.errorcode.CustomErrorCode;
 import kr.co.wanted.wantedpreonboardingbackend.errors.errorcode.ErrorCode;
 import kr.co.wanted.wantedpreonboardingbackend.errors.exception.EmailExistException;
 import kr.co.wanted.wantedpreonboardingbackend.domain.Member;
@@ -19,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
-    private final ModelMapper modelMapper;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -29,10 +29,10 @@ public class MemberServiceImpl implements MemberService {
         final boolean exist = memberRepository.existsByEmail(email);
 
         if (exist) {
-            throw new EmailExistException(CommonErrorCode.INVALID_PARAMETER);
+            throw new EmailExistException(CustomErrorCode.JOIN_INPUT_FORMAT);
         }
 
-        Member member = modelMapper.map(memberJoinDTO, Member.class);
+        Member member = Member.from(memberJoinDTO);
         member.changePassword(passwordEncoder.encode(memberJoinDTO.getPassword()));
         log.info("JOIN MEMBER = {}", member);
 

@@ -1,5 +1,6 @@
 package kr.co.wanted.wantedpreonboardingbackend.domain;
 
+import kr.co.wanted.wantedpreonboardingbackend.dto.BoardDTO;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -9,9 +10,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Builder
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(value = AuditingEntityListener.class)
 public class Board {
@@ -46,5 +45,14 @@ public class Board {
 
     public void changeWriter(Member writer) {
         this.member = writer;
+    }
+
+    public static Board from(BoardDTO dto) {
+        Board board = new Board();
+        board.id = dto.getId();
+        board.title = dto.getTitle();
+        board.content = dto.getTitle();
+
+        return board;
     }
 }
