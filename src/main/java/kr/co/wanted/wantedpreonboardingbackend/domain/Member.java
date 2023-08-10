@@ -9,9 +9,9 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @Entity
 @Table(name = "members")
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member {
@@ -27,7 +27,7 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String password;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> postList = new ArrayList<>();
 
     public void changePassword(String password) {

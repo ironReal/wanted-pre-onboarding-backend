@@ -43,8 +43,7 @@ public class PostServiceImpl implements PostService {
         final Optional<Member> findMember = memberRepository.findByEmail(email);
         final Member member = findMember.orElseThrow(() -> new EmailNotFoundException(CustomErrorCode.RESOURCE_NOT_FOUND));
 
-        final Post board = modelMapper.map(boardDTO, Post.class);
-        board.changeWriter(member.getEmail());
+        final Post board = Post.from(boardDTO, member);
         final Post result = boardRepository.save(board);
 
         return result.getId();
@@ -104,7 +103,7 @@ public class PostServiceImpl implements PostService {
     private void validationWriter(Post board) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        if (!Objects.equals(email, board.getMember())) {
+        if (!Objects.equals(email, board.getWriter().getEmail())) {
             throw new BoardWriterValidation(CustomErrorCode.WRITER_MISS_MACH);
         }
     }
