@@ -21,7 +21,7 @@ services:
 
   application:
     container_name: spring_server
-    image: parkderda/wanted-pre-onboarding-backend-spring:latest
+    image: parkderda/wanted-pre-onboarding-backend-spring-boot
     ports:
       - "8080:8080"
     environment:
