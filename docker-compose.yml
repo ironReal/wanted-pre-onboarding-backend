@@ -21,9 +21,7 @@ services:
 
   application:
     container_name: docker-compose-test
-    build:
-      context: ./
-      dockerfile: Dockerfile
+    image: parkderda/wanted-pre-onboarding-backend-spring
     ports:
       - "8080:8080"
     environment:
