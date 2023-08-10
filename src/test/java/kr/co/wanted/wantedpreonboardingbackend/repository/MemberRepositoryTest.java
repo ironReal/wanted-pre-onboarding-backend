@@ -43,10 +43,10 @@ class MemberRepositoryTest {
                 .build();
         final Member member = Member.from(joinDTO);
         final Member savedMember = memberRepository.save(member);
-
         final Optional<Member> result = memberRepository.findByEmail(savedMember.getEmail());
         final Member findMember = result.orElseThrow(() -> new IllegalArgumentException("not found member email = " + savedMember.getEmail()));
 
         assertThat(findMember.getEmail()).isEqualTo("test@google.com");
+        assertThat(findMember.getId()).isEqualTo(1L);
     }
 }
