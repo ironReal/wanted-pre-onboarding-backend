@@ -1,0 +1,7 @@
+POST localhost:8080/api/member/join
+Content-Type: application/json
+
+{
+  "email" : "wanted@google.com",
+  "password" : "12345678"
+}
