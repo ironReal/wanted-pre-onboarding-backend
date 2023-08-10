@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
 @WithMockUser(username="test@google.com", password = "12345678")
-class BoardServiceTest {
+class PostServiceTest {
 
     @Mock
     private ModelMapper modelMapper;
@@ -40,6 +40,7 @@ class BoardServiceTest {
 
     private PostDTO boardDTO;
     private MemberJoinDTO memberJoinDTO;
+    private Member member;
 
 
     @BeforeEach
@@ -55,16 +56,20 @@ class BoardServiceTest {
                 .email("test@google.com")
                 .password("12345678")
                 .build();
+
+        member = Member.from(MemberJoinDTO.builder()
+                .email("test@google.com")
+                .password("12345678")
+                .build());
     }
 
     @Test
     @DisplayName("게시물 등록")
     void register() {
         Optional<Member> member = Optional.of(Member.from(memberJoinDTO));
-        Post board = Post.from(boardDTO);
+        Post board = Post.from(boardDTO, member.get());
 
         when(memberRepository.findByEmail(any(String.class))).thenReturn(member);
-        when(modelMapper.map(boardDTO, Post.class)).thenReturn(board);
         when(boardRepository.save(any(Post.class))).thenReturn(board);
 
         assertThat(boardService.register(boardDTO)).isEqualTo(board.getId());
@@ -73,7 +78,7 @@ class BoardServiceTest {
     @Test
     @DisplayName("게시물 조회")
     void read() {
-        final Post board = Post.from(boardDTO);
+        final Post board = Post.from(boardDTO, member);
         when(boardRepository.findById(anyLong())).thenReturn(Optional.of(board));
         when(modelMapper.map(board, PostDTO.class)).thenReturn(boardDTO);
 
@@ -83,8 +88,7 @@ class BoardServiceTest {
     @Test
     @DisplayName("게시물 수정")
     void update() {
-        Post board = Post.from(boardDTO);
-        board.changeWriter(Member.from(memberJoinDTO).getEmail());
+        Post board = Post.from(boardDTO, member);
 
         PostDTO updateDTO = PostDTO.builder()
                 .id(board.getId())
@@ -106,8 +110,7 @@ class BoardServiceTest {
     @Test
     @DisplayName("게시물 삭제")
     void delete() {
-        final Post board = Post.from(boardDTO);
-        board.changeWriter(Member.from(memberJoinDTO).getEmail());
+        final Post board = Post.from(boardDTO, member);
 
         when(boardRepository.existsById(anyLong())).thenReturn(true);
         when(boardRepository.findById(anyLong())).thenReturn(Optional.of(board));

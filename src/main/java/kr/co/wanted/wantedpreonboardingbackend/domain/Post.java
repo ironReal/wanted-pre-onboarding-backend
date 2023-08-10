@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @Table(name = "posts")
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @EntityListeners(value = AuditingEntityListener.class)
 public class Post {
 
@@ -28,7 +27,9 @@ public class Post {
     @Column(length = 500, nullable = false)
     private String content;
 
-    private String member;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member writer;
 
     @CreatedDate
     @Column(name = "reg_date", updatable = false)
@@ -43,15 +44,12 @@ public class Post {
         this.content = content;
     }
 
-    public void changeWriter(String writer) {
-        this.member = writer;
-    }
-
-    public static Post from(PostDTO dto) {
+    public static Post from(PostDTO dto, Member writer) {
         Post board = new Post();
         board.id = dto.getId();
         board.title = dto.getTitle();
         board.content = dto.getContent();
+        board.writer = writer;
 
         return board;
     }
