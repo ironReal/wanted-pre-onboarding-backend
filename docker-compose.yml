@@ -20,8 +20,8 @@ services:
       - test_network
 
   application:
-    container_name: docker-compose-test
-    image: parkderda/wanted-pre-onboarding-backend-spring
+    container_name: spring_server
+    image: parkderda/wanted-pre-onboarding-backend-spring:latest
     ports:
       - "8080:8080"
     environment:

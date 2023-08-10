@@ -1,3 +1,9 @@
+# 클라우드 배포 환경
+![클라우드 배포 환경](img_1.png)
+## AWS 배포 IP 주소
+```text
+ 13.125.54.58
+```
 # 지원자의 성명
 **박철진**
 # 애플리케이션의 실행 방법 (엔드포인트 호출 방법 포함)
@@ -16,14 +22,11 @@ $ docker-compose up --build -d
 | PUT | /api//post/update/{id} | 게시물 수정 |
 | POST | /api//post/list | 게시물 목록 |
 | DELETE | /api//post/{id} | 게시물 삭제 |
-## AWS 배포 IP 주소
-```text
- 13.125.54.58
-```
-# 데이터베이스 테이블 구조
-![데이터베이스 테이블 구조]![img_1.png](img_1.png)
-# 구현한 API의 동작을 촬영한 데모 영상 링크
 
+# 데이터베이스 테이블 구조
+![데이터베이스 테이블 구조](데이터베이스%20구조.png)
+# 구현한 API의 동작을 촬영한 데모 영상 링크
+[데모 영상 링크(youtube)](https://www.youtube.com/watch?v=O6hCjmMgMR8&t=3s&ab_channel=%EB%B0%95%EC%B2%A0%EC%A7%84)
 # 구현 방법 및 이유에 대한 간략한 설명
 ## 회원가입
 - 전달된 JSON 타입을 MemberDTO 객체로 변환하여 회원가입을 진행합니다. 이때 Validation을 통해 객체가 email과 password 조건에 맞는지 검증합니다.
