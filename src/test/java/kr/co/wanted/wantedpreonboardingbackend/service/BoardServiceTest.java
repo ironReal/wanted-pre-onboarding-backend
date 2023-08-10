@@ -1,39 +1,21 @@
 package kr.co.wanted.wantedpreonboardingbackend.service;
 
-import kr.co.wanted.wantedpreonboardingbackend.config.CustomSecurityConfig;
-import kr.co.wanted.wantedpreonboardingbackend.domain.Board;
+import kr.co.wanted.wantedpreonboardingbackend.domain.Post;
 import kr.co.wanted.wantedpreonboardingbackend.domain.Member;
-import kr.co.wanted.wantedpreonboardingbackend.dto.BoardDTO;
+import kr.co.wanted.wantedpreonboardingbackend.dto.PostDTO;
 import kr.co.wanted.wantedpreonboardingbackend.dto.MemberJoinDTO;
-import kr.co.wanted.wantedpreonboardingbackend.dto.MemberLoginDTO;
 import kr.co.wanted.wantedpreonboardingbackend.errors.exception.BoardIdNotFound;
-import kr.co.wanted.wantedpreonboardingbackend.repository.BoardRepository;
+import kr.co.wanted.wantedpreonboardingbackend.repository.PostRepository;
 import kr.co.wanted.wantedpreonboardingbackend.repository.MemberRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.test.autoconfigure.webservices.server.AutoConfigureMockWebServiceClient;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
@@ -41,7 +23,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
@@ -51,20 +32,20 @@ class BoardServiceTest {
     @Mock
     private ModelMapper modelMapper;
     @Mock
-    private BoardRepository boardRepository;
+    private PostRepository boardRepository;
     @Mock
     private MemberRepository memberRepository;
     @InjectMocks
-    private BoardServiceImpl boardService;
+    private PostServiceImpl boardService;
 
-    private BoardDTO boardDTO;
+    private PostDTO boardDTO;
     private MemberJoinDTO memberJoinDTO;
 
 
     @BeforeEach
     void setUp() {
-        boardService = new BoardServiceImpl(modelMapper, boardRepository, memberRepository);
-        boardDTO = BoardDTO.builder()
+        boardService = new PostServiceImpl(modelMapper, boardRepository, memberRepository);
+        boardDTO = PostDTO.builder()
                 .id(1L)
                 .title("title")
                 .content("content")
@@ -80,11 +61,11 @@ class BoardServiceTest {
     @DisplayName("게시물 등록")
     void register() {
         Optional<Member> member = Optional.of(Member.from(memberJoinDTO));
-        Board board = Board.from(boardDTO);
+        Post board = Post.from(boardDTO);
 
         when(memberRepository.findByEmail(any(String.class))).thenReturn(member);
-        when(modelMapper.map(boardDTO, Board.class)).thenReturn(board);
-        when(boardRepository.save(any(Board.class))).thenReturn(board);
+        when(modelMapper.map(boardDTO, Post.class)).thenReturn(board);
+        when(boardRepository.save(any(Post.class))).thenReturn(board);
 
         assertThat(boardService.register(boardDTO)).isEqualTo(board.getId());
     }
@@ -92,9 +73,9 @@ class BoardServiceTest {
     @Test
     @DisplayName("게시물 조회")
     void read() {
-        final Board board = Board.from(boardDTO);
+        final Post board = Post.from(boardDTO);
         when(boardRepository.findById(anyLong())).thenReturn(Optional.of(board));
-        when(modelMapper.map(board, BoardDTO.class)).thenReturn(boardDTO);
+        when(modelMapper.map(board, PostDTO.class)).thenReturn(boardDTO);
 
         assertThat(boardService.read(anyLong())).isEqualTo(boardDTO);
     }
@@ -102,20 +83,20 @@ class BoardServiceTest {
     @Test
     @DisplayName("게시물 수정")
     void update() {
-        Board board = Board.from(boardDTO);
-        board.changeWriter(Member.from(memberJoinDTO));
+        Post board = Post.from(boardDTO);
+        board.changeWriter(Member.from(memberJoinDTO).getEmail());
 
-        BoardDTO updateDTO = BoardDTO.builder()
+        PostDTO updateDTO = PostDTO.builder()
                 .id(board.getId())
                 .title("updateTitle")
                 .content("updateContent")
                 .build();
 
         when(boardRepository.findById(anyLong())).thenReturn(Optional.of(board));
-        when(boardRepository.save(any(Board.class))).thenReturn(board);
-        when(modelMapper.map(board, BoardDTO.class)).thenReturn(updateDTO);
+        when(boardRepository.save(any(Post.class))).thenReturn(board);
+        when(modelMapper.map(board, PostDTO.class)).thenReturn(updateDTO);
 
-        final BoardDTO updatedBoard = boardService.update(anyLong(), updateDTO);
+        final PostDTO updatedBoard = boardService.update(anyLong(), updateDTO);
 
         assertThat(boardDTO.getTitle()).isNotEqualTo(updatedBoard.getTitle());
         assertThat(boardDTO.getContent()).isNotEqualTo(updatedBoard.getContent());
@@ -125,8 +106,8 @@ class BoardServiceTest {
     @Test
     @DisplayName("게시물 삭제")
     void delete() {
-        final Board board = Board.from(boardDTO);
-        board.changeWriter(Member.from(memberJoinDTO));
+        final Post board = Post.from(boardDTO);
+        board.changeWriter(Member.from(memberJoinDTO).getEmail());
 
         when(boardRepository.existsById(anyLong())).thenReturn(true);
         when(boardRepository.findById(anyLong())).thenReturn(Optional.of(board));

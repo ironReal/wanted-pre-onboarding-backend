@@ -1,44 +1,35 @@
-version: "3"
+version: '3'
+
 services:
   database:
     container_name: mysql_db
     image: mysql
-    restart: unless-stopped
     environment:
       MYSQL_DATABASE: board
       MYSQL_ROOT_HOST: '%'
       MYSQL_ROOT_PASSWORD: 1234
       TZ: 'Asia/Seoul'
-    volumes:
-      - ./mysql/conf.d:/etc/mysql/conf.d
     ports:
       - "3306:3306"
+
     command:
       - "mysqld"
       - "--character-set-server=utf8mb4"
       - "--collation-server=utf8mb4_unicode_ci"
     networks:
-      - spring_network
+      - test_network
 
   application:
-    container_name: wanted-pre-onboarding
-    restart: always
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    volumes:
-      - ./app:/app
-    working_dir: /app
-    command: ["./gradlew", "bootrun"]
+    container_name: docker-compose-test
+    image: parkderda/wanted-pre-onboarding-backend-spring
     ports:
       - "8080:8080"
-    depends_on:
-      - database
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql_db:3306/board?useSSL=false&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 1234
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql_db:3306/board?serverTimezone=UTC&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME:
+      SPRING_DATASOURCE_PASSWORD:
     networks:
-      - spring_network
+      - test_network
+
 networks:
-  spring_network:
+  test_network:

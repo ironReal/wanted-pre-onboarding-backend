@@ -2,17 +2,15 @@ package kr.co.wanted.wantedpreonboardingbackend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.co.wanted.wantedpreonboardingbackend.config.CustomSecurityConfig;
-import kr.co.wanted.wantedpreonboardingbackend.dto.BoardDTO;
-import kr.co.wanted.wantedpreonboardingbackend.repository.BoardRepository;
+import kr.co.wanted.wantedpreonboardingbackend.dto.PostDTO;
+import kr.co.wanted.wantedpreonboardingbackend.repository.PostRepository;
 import kr.co.wanted.wantedpreonboardingbackend.repository.MemberRepository;
-import kr.co.wanted.wantedpreonboardingbackend.service.BoardService;
+import kr.co.wanted.wantedpreonboardingbackend.service.PostService;
 import kr.co.wanted.wantedpreonboardingbackend.util.JWTUtil;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -20,8 +18,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -43,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @EnableConfigurationProperties
 @ExtendWith(SpringExtension.class)
 @WithMockUser(username = "test@google.com", password = "12345678")
-@WebMvcTest(value = BoardController.class,
+@WebMvcTest(value = PostController.class,
 excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = CustomSecurityConfig.class))
 class BoardControllerTest {
 
@@ -54,7 +50,7 @@ class BoardControllerTest {
     private ObjectMapper mapper;
 
     @MockBean
-    private BoardService boardService;
+    private PostService boardService;
 
     @InjectMocks
     private JWTUtil jwtUtil;
@@ -63,15 +59,15 @@ class BoardControllerTest {
     private MemberRepository memberRepository;
 
     @MockBean
-    private BoardRepository boardRepository;
+    private PostRepository boardRepository;
 
-    private BoardDTO boardDTO;
+    private PostDTO boardDTO;
     private final Long ID = 1L;
 
 
     @BeforeEach
     void setUp() {
-        boardDTO = BoardDTO.builder()
+        boardDTO = PostDTO.builder()
                 .id(1L)
                 .title("testTitle")
                 .content("testContent")
@@ -86,7 +82,7 @@ class BoardControllerTest {
     void testBoardRegister() throws Exception {
         when(boardService.register(boardDTO)).thenReturn(1L);
 
-        mvc.perform(MockMvcRequestBuilders.post("/api/board/register")
+        mvc.perform(MockMvcRequestBuilders.post("/api/post/register")
                         .header(HttpHeaders.AUTHORIZATION, generatedBearerToken(1))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(boardDTO))
@@ -100,7 +96,7 @@ class BoardControllerTest {
     void testBoardReadId() throws Exception {
         when(boardService.read(ID)).thenReturn(boardDTO);
 
-        mvc.perform(MockMvcRequestBuilders.get("/api/board/{id}", ID)
+        mvc.perform(MockMvcRequestBuilders.get("/api/post/{id}", ID)
                         .header(HttpHeaders.AUTHORIZATION, generatedBearerToken(1))
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf()))
@@ -113,15 +109,15 @@ class BoardControllerTest {
     @Test
     @DisplayName("게시물 수정")
     void testBoardUpdate() throws Exception {
-        BoardDTO updateDTO = BoardDTO.builder()
+        PostDTO updateDTO = PostDTO.builder()
                 .id(ID)
                 .title("updateTitle")
                 .content("updateContent")
                 .build();
 
-        when(boardService.update(anyLong(), any(BoardDTO.class))).thenReturn(updateDTO);
+        when(boardService.update(anyLong(), any(PostDTO.class))).thenReturn(updateDTO);
 
-        mvc.perform(MockMvcRequestBuilders.put("/api/board/update/{id}", ID)
+        mvc.perform(MockMvcRequestBuilders.put("/api/post/update/{id}", ID)
                         .header(HttpHeaders.AUTHORIZATION, generatedBearerToken(1))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(updateDTO))
@@ -137,7 +133,7 @@ class BoardControllerTest {
         Long anyId = anyLong();
         when(boardService.delete(anyId)).thenReturn(anyId);
 
-        mvc.perform(MockMvcRequestBuilders.delete("/api/board/{id}", ID)
+        mvc.perform(MockMvcRequestBuilders.delete("/api/post/{id}", ID)
                         .header(HttpHeaders.AUTHORIZATION, generatedBearerToken(1))
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(csrf()))

@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "members")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Member {
 
     @Id
@@ -26,7 +28,7 @@ public class Member {
     private String password;
 
     @OneToMany(mappedBy = "member")
-    private List<Board> boardList = new ArrayList<>();
+    private List<Post> postList = new ArrayList<>();
 
     public void changePassword(String password) {
         this.password = password;
