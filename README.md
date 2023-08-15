@@ -24,7 +24,7 @@ $ docker-compose up --build -d
 | DELETE | /api//post/{id} | 게시물 삭제 |
 
 # 데이터베이스 테이블 구조
-![데이터베이스 테이블 구조](데이터베이스%20구조.png)
+![데이터베이스 테이블 구조](img.png)
 # 구현한 API의 동작을 촬영한 데모 영상 링크
 [데모 영상 링크(youtube)](https://www.youtube.com/watch?v=O6hCjmMgMR8&t=3s&ab_channel=%EB%B0%95%EC%B2%A0%EC%A7%84)
 # 구현 방법 및 이유에 대한 간략한 설명
